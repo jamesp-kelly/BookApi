@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 var db = mongoose.connect('mongodb://localhost/bookAPI');
 
@@ -9,39 +10,14 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
-var bookRouter = express.Router();
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
-bookRouter.route('/Books')
-  .get(function(req, res) {
-    var query = {};
 
-    if (req.query.genre) {
-      query.genre = req.query.genre;
-    }
-    Book.find(query, function(err, books) {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.json(books);
-      }
-    });
-  });
+var bookRouter = require('./routes/bookRoutes')(Book);
 
-bookRouter.route('/Books/:bookId')
-  .get(function(req, res) {
-
-    Book.findById(req.params.bookId, function(err, book) {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.json(book);
-      }
-    });
-  });
-
-bookRouter.route('/Books/:bookId')
-app.use('/api', bookRouter);
-
+app.use('/api/books', bookRouter);
+//app.use('/api/authors', authorRouter);
 
 
 app.get('/', function(req, res) {
