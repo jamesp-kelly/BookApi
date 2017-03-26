@@ -5,9 +5,6 @@ var routes = function(BookModel) {
 
   var bookController = require('../controllers/bookController')(BookModel);
 
-  console.log('bookController');
-  console.log(bookController);
-
   bookRouter.route('/')
     .post(bookController.post)
     .get(bookController.get);
@@ -34,7 +31,13 @@ var routes = function(BookModel) {
 
   function getByBookId(req, res) {
     //middleware called before here
-    res.json(req.book);
+
+    var returnBook = req.book.toJSON();
+    returnBook.links = {};
+    var newLink = 'http://' + req.headers.host + '/api/books/?genre=' + returnBook.genre; 
+    returnBook.links.FilterByThisGenre = encodeURI(newLink);
+
+    res.json(returnBook);
   }
 
   function putByBookId(req, res) {

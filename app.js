@@ -12,9 +12,6 @@ if (process.env.ENV == 'Test') {
 }
 
 
-
-console.log(BookModel);
-
 var app = express();
 
 var port = process.env.PORT || 3000;
